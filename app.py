@@ -1,4 +1,4 @@
-from flask import Flask, Response, render_template, request
+from flask import Flask, Response, render_template, request,send_file
 import json
 import pandas as pd
 import dataframe_image as dfi
@@ -29,6 +29,10 @@ def get_oversiktjson():
     jsonString=json.dumps(total,ensure_ascii=False)
     return (Response(jsonString,content_type="application/json; charset=utf-8"))
 
+@app.route('/exportcsv', methods=['GET'])
+def get_csvExport():
+    return send_file('persistence/total.csv', as_attachment=True)
+
 @app.route('/register',methods=['POST'])
 def post_register():
     try:
@@ -37,13 +41,14 @@ def post_register():
         what=request_data['what']
         duplicate=False
         for i in total['total']:
-            if(what in i['what']):
+            if(what.lower() in i['what'].lower()):
                 print(i)
                 duplicate=True
         if(not duplicate):
             total['total'].append({'who':who,'what':what})
             writeToJsonFile({'who':who,'what':what})
             makeImage()
+            writeToCsvFile()
             return '''{} added {}'''.format(who,what)
         else:
             return ''''Someone is already bringing: {}'''.format(what)
@@ -57,10 +62,14 @@ def writeToJsonFile(new,file='persistence/oversikt.json'):
         json.dump(total,file,ensure_ascii=False)
     print(total)
 
+def writeToCsvFile():
+    pd.DataFrame.from_dict(total['total']).to_csv('persistence/total.csv',index=False,sep=';',encoding='utf-8')
+
 def makeImage():
     dfi.export(pd.DataFrame.from_dict(total['total']),'static/images/output.png')
 
 
 if __name__ == '__main__':
     makeImage()
-    app.run(host="0.0.0.0", port=1705, debug=True)
+    writeToCsvFile()
+    app.run(host="0.0.0.0", port=1705, debug=False)

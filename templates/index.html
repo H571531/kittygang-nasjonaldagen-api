@@ -1,2 +1,17 @@
-<h3>Oversikt: </h3>
-<img src="{{ url_for('static', filename='images/output.png') }}" class="image" />
+<!DOCTYPE html>
+<html>
+    <head>
+    
+    </head>
+    <body>
+        <h1>Oversikt: </h1>
+        <img src="{{ url_for('static', filename='images/output.png') }}" class="image" />
+        <hr>
+        <h2>Freak in the spreadsheets?</h2>
+        <p>Download the csv to find happiness</p>
+        <a href="/exportcsv">
+            <button>Export to CSV for EXCELlent enjoyment</button>
+        </a>
+    
+    </body>
+</html>
