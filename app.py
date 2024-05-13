@@ -50,6 +50,8 @@ def post_register():
     except Exception as e:
         print("ERROR:",e)
         return '''Invalid input, submit valid JSON with attributes like: {"who":"yourname","what":"whatyouarebringing"}'''
+    
+#Backend functions
 def writeToJsonFile(new,file='persistence/oversikt.json'):
     with open('persistence/oversikt.json','r+')as file:
         json.dump(total,file,ensure_ascii=False)
